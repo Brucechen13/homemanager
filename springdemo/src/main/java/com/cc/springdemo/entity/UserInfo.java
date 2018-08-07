@@ -1,14 +1,12 @@
 package com.cc.springdemo.entity;
 
-import com.cc.springdemo.entity.shiro.SysRole;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.NotBlank;
 
-import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,7 +32,7 @@ public class UserInfo implements Serializable {
     private Date gmtModified;
     private byte state;//用户状态
 
-    @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
-    @JoinTable(name = "SysUserRole", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
-    private List<SysRole> roleList;// 一个用户具有多个角色
+    //@ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
+    //@JoinTable(name = "SysUserRole", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
+    //private List<SysRole> roleList;// 一个用户具有多个角色
 }
