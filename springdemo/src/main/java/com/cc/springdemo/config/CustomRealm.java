@@ -1,5 +1,9 @@
 package com.cc.springdemo.config;
 
+import com.cc.springdemo.entity.SysPermission;
+import com.cc.springdemo.entity.SysRole;
+import com.cc.springdemo.entity.UserInfo;
+import com.cc.springdemo.service.IUserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationException;
@@ -11,6 +15,9 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,13 +26,17 @@ import java.util.Set;
 public class CustomRealm extends AuthorizingRealm {
 
 
+    @Autowired
+    private IUserService service;
+
+
     //告诉shiro如何根据获取到的用户信息中的密码和盐值来校验密码
     {
         //设置用于匹配密码的CredentialsMatcher
         HashedCredentialsMatcher hashMatcher = new HashedCredentialsMatcher();
         hashMatcher.setHashAlgorithmName(Sha256Hash.ALGORITHM_NAME);
         hashMatcher.setStoredCredentialsHexEncoded(false);
-        hashMatcher.setHashIterations(1024);
+        hashMatcher.setHashIterations(16);
         this.setCredentialsMatcher(hashMatcher);
     }
 
@@ -38,13 +49,22 @@ public class CustomRealm extends AuthorizingRealm {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
 
-        //User user = (User) getAvailablePrincipal(principals);
+        UserInfo user = (UserInfo) getAvailablePrincipal(principals);
 
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//        System.out.println("获取角色信息："+user.getRoles());
-//        System.out.println("获取权限信息："+user.getPerms());
-//        info.setRoles(user.getRoles());
-//        info.setStringPermissions(user.getPerms());
+        Set<String> roles = new HashSet<>();
+        Set<String> perms = new HashSet<>();
+        for(SysRole role : user.getRoleList()){
+            roles.add(role.getRole());
+            for (SysPermission perm:
+                 role.getPermissions()) {
+                perms.add(perm.getName());
+            }
+        }
+        System.out.println("获取角色信息："+roles.size());
+        System.out.println("获取权限信息："+perms.size());
+        info.setRoles(roles);
+        info.setStringPermissions(perms);
         return info;
     }
 
@@ -55,33 +75,23 @@ public class CustomRealm extends AuthorizingRealm {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         String username = upToken.getUsername();
 
-//        // Null username is invalid
-//        if (username == null) {
-//            throw new AccountException("Null usernames are not allowed by this realm.");
-//        }
-//
-//        User userDB = userService.findUserByName(username);
-//
-//
-//        if (userDB == null) {
-//            throw new UnknownAccountException("No account found for admin [" + username + "]");
-//        }
-//
-//        //查询用户的角色和权限存到SimpleAuthenticationInfo中，这样在其它地方
-//        //SecurityUtils.getSubject().getPrincipal()就能拿出用户的所有信息，包括角色和权限
-//        Set<String> roles = roleService.getRolesByUserId(userDB.getUid());
-//        Set<String> perms = permService.getPermsByUserId(userDB.getUid());
-//        userDB.getRoles().addAll(roles);
-//        userDB.getPerms().addAll(perms);
-//
-//        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userDB, userDB.getPwd(), getName());
-//        if (userDB.getSalt() != null) {
-//            info.setCredentialsSalt(ByteSource.Util.bytes(userDB.getSalt()));
-//        }
+        // Null username is invalid
+        if (username == null) {
+            throw new AccountException("Null usernames are not allowed by this realm.");
+        }
 
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo();
+        UserInfo userDB = service.findByLoginName(username);
+
+
+        if (userDB == null) {
+            throw new UnknownAccountException("No account found for admin [" + username + "]");
+        }
+
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userDB, userDB.getPassword(), getName());
+        if (userDB.getSalt() != null) {
+            info.setCredentialsSalt(ByteSource.Util.bytes(userDB.getSalt()));
+        }
         return info;
-
     }
 
 }

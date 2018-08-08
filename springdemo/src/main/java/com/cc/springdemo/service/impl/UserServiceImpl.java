@@ -2,7 +2,7 @@ package com.cc.springdemo.service.impl;
 
 import java.util.List;
 
-import com.cc.springdemo.entity.User;
+import com.cc.springdemo.entity.UserInfo;
 import com.cc.springdemo.repository.UserJpaRepository;
 import com.cc.springdemo.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,29 +17,25 @@ public class UserServiceImpl implements IUserService
     @Autowired
     private UserJpaRepository userRepository;
 
-    public List<User> findAll()
+    public List<UserInfo> findAll()
     {
         return userRepository.findAll();
     }
 
-    public List<User> findByName(String name)
+    public UserInfo findByLoginName(String name)
     {
-        List<User> userList1 = userRepository.findByName1(name);
-        List<User> userList2 = userRepository.findByName2(name);
-        List<User> userList3 = userRepository.findByNameAndAddress(name, "3");
-        System.out.println("userList1:" + userList1);
-        System.out.println("userList2:" + userList2);
-        System.out.println("userList3:" + userList3);
-        return userRepository.findByName(name);
+        UserInfo userInfo = userRepository.findByLoginName(name);
+        System.out.println("userList3:" + userInfo);
+        return userInfo;
     }
 
-    public void saveUser(User book)
+    public void saveUser(UserInfo userInfo)
     {
-        userRepository.save(book);
+        userRepository.save(userInfo);
     }
 
     @Cacheable("users")
-    public User findOne(long id)
+    public UserInfo findOne(long id)
     {
         System.out.println("Cached Pages");
         return null; //userRepository.findOne(id);

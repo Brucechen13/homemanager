@@ -2,10 +2,11 @@ package com.cc.springdemo.entity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -16,23 +17,50 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 @Entity
+@Table(name = "user_info")
 public class UserInfo implements Serializable {
 
     @Id@GeneratedValue
-    private int uid;
-    @NotBlank(message = "用户名不能为空")
+    private int id;
 
+    @NotBlank(message = "用户名不能为空")
+    @Column(unique=true, nullable=false)
+    private String loginName;
+    @Column(nullable=false)
     private String userName;
+
+    @Column(nullable=false)
+    private String salt;
+    @Column(nullable=false)
     private String password;
 
-    @Column(unique=true, nullable=true)
-    private String loginName;
-    private String salt;
-    private Date gmtCreate;
-    private Date gmtModified;
-    private byte state;//用户状态
+    @Enumerated(EnumType.STRING)//枚举字符串
+    @Column(nullable=false, columnDefinition="varchar(32) default 'NORMAL'")
+    private StateType state;//用户状态
 
-    //@ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
-    //@JoinTable(name = "SysUserRole", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
-    //private List<SysRole> roleList;// 一个用户具有多个角色
+    @Column(name = "tmCreate", updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    //@Temporal(TemporalType.TIMESTAMP)
+    private Timestamp gmtCreate;
+
+    @Column(name = "tmModified", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    //@Temporal(TemporalType.TIMESTAMP)
+    private Timestamp gmtModified;
+
+
+    @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
+    @JoinTable(name = "sys_user_role", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
+    private List<SysRole> roleList;// 一个用户具有多个角色
 }
+
+enum StateType {
+    NORMAL("正常"),
+    LOCKED("禁用"),;
+    private String name;
+
+    StateType(String name){
+        this.name = name;
+    }
+}
+
+
+

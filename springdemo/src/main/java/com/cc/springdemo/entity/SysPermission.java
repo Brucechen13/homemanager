@@ -1,9 +1,16 @@
-package com.cc.springdemo.entity.shiro;
+package com.cc.springdemo.entity;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.io.Serializable;
+import javax.persistence.*;
 
+@Data
+@Accessors(chain = true)
 @Entity
+@Table(name = "sys_permission")
 public class SysPermission implements Serializable {
     @Id
     @GeneratedValue
@@ -18,7 +25,7 @@ public class SysPermission implements Serializable {
     private Boolean available = Boolean.FALSE;
 
     @ManyToMany
-    @JoinTable(name="SysRolePermission",joinColumns={@JoinColumn(name="permissionId")},inverseJoinColumns={@JoinColumn(name="roleId")})
+    @JoinTable(name="sys_role_permission",joinColumns={@JoinColumn(name="permissionId")},inverseJoinColumns={@JoinColumn(name="roleId")})
     private List<SysRole> roles;
 
     // 省略 get set 方法

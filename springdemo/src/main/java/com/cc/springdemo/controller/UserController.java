@@ -2,7 +2,7 @@ package com.cc.springdemo.controller;
 
 
 import com.cc.springdemo.entity.UserInfo;
-import com.cc.springdemo.service.UserInfoService;
+import com.cc.springdemo.service.IUserService;
 import com.cc.springdemo.utils.ShiroUtils;
 import com.cc.springdemo.utils.WebResponse;
 import org.apache.shiro.SecurityUtils;
@@ -23,7 +23,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 public class UserController {
 
     @Autowired
-    private UserInfoService service;
+    private IUserService service;
 
     @RequestMapping(value = "/view")
     @ResponseBody
@@ -49,7 +49,7 @@ public class UserController {
         //article.setUserId(1L);
         //articleService.saveArticle(article);
         Map<String, Object> ret = new HashMap<>();
-        ret.put("id", userInfo.getUid());
+        ret.put("id", userInfo.getId());
         Map<String, Object> response = WebResponse.getSuccessResponse(ret);
         return response;
     }
