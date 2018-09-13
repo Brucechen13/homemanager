@@ -55,6 +55,6 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.7.0'
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
 
-    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat::2.0.1.RELEASE')
+    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat:2.0.1.RELEASE')
 }
 

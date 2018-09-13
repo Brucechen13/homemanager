@@ -36,7 +36,7 @@ public class UserInfo implements Serializable {
 
     @Enumerated(EnumType.STRING)//枚举字符串
     @Column(nullable=false, columnDefinition="varchar(32) default 'NORMAL'")
-    private StateType state;//用户状态
+    private EnumTypeUtils.StateType state;//用户状态
 
     @Column(name = "tmCreate", updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     //@Temporal(TemporalType.TIMESTAMP)
@@ -50,16 +50,6 @@ public class UserInfo implements Serializable {
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "sys_user_role", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
     private List<SysRole> roleList;// 一个用户具有多个角色
-}
-
-enum StateType {
-    NORMAL("正常"),
-    LOCKED("禁用"),;
-    private String name;
-
-    StateType(String name){
-        this.name = name;
-    }
 }
 
 

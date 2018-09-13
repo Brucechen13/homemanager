@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Data
 @Accessors(chain = true)
 @Entity
+@NamedEntityGraph(name = "SysRole.lazy", attributeNodes = {@NamedAttributeNode("userInfos")})
 @Table(name = "sys_role")
 public class SysRole {
     @Id
