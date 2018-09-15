@@ -6,8 +6,12 @@ import com.cc.homeserver.service.IUserService;
 import com.cc.homeserver.utils.ShiroUtils;
 import com.cc.homeserver.utils.WebResponse;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +26,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 @RequestMapping(value = "/user")
 public class UserController {
 
+    private static final transient Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private IUserService service;
 
-    @RequestMapping(value = "/view")
+    @RequestMapping(value = "/update")
     @ResponseBody
     public String updateAdminUserPassword(String newPassword) {
         // 从shiro的session中取activeUser
@@ -44,29 +50,83 @@ public class UserController {
         return newPassword;
     }
 
-    @RequestMapping(value = "/", method = POST, produces = "application/json")
-    public Map<String, Object> saveUser(@RequestBody UserInfo userInfo) {
-        //article.setUserId(1L);
-        //articleService.saveArticle(article);
+    @RequestMapping(value = "/save", method = POST, produces = "application/json")
+    public Map<String, Object> saveUser(String userName, String nickName, String password) {
+        service.saveUser(userName, nickName, password);
+        Map<String, Object> response = WebResponse.getSuccessResponse("注册成功");
+        return response;
+    }
+
+    @RequestMapping(value = "/login", method = POST, produces = "application/json")
+    public Map<String, Object> loginUser(String userName, String password){
+        // 安全操作
+        Subject currentUser = SecurityUtils.getSubject();
+
+        // 在应用的当前会话中设置属性
+        Session session =  currentUser.getSession();
+        session.setAttribute("key","value");
+
+        //当前我们的用户是匿名的用户，我们尝试进行登录，
+        if (!currentUser.isAuthenticated()){
+            UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
+
+            //this is all you have to do to support 'remember me' (no config - built in!):
+            token.setRememberMe(true);
+
+            //尝试进行登录用户，如果登录失败了，我们进行一些处理
+
+            try{
+                currentUser.login(token);
+
+                //当我们获登录用户之后
+                logger.info("User [" + currentUser.getPrincipal() + "] logged in successfully.");
+
+
+                // 查看用户是否有指定的角色
+                if ( currentUser.hasRole( "client" ) ) {
+                    logger.info("Look is in your role" );
+                } else {
+                    logger.info( "....." );
+                }
+
+                // 查看用户是否有某个权限
+                if ( currentUser.isPermitted( "look:desk" ) ) {
+                    logger.info("You can look.  Use it wisely.");
+                } else {
+                    logger.info("Sorry, you can't look.");
+                }
+
+                //登出
+
+                // currentUser.logout();
+                return WebResponse.getSuccessResponse("登录成功");
+
+            }
+            catch ( UnknownAccountException uae ) {
+                //账户不存在的操作
+                logger.info("账户不存在的操作");
+            } catch ( IncorrectCredentialsException ice ) {
+                //密码不正确
+                logger.info("密码不正确");
+            } catch ( LockedAccountException lae ) {
+                //用户被锁定了
+                logger.info("用户被锁定了");
+            } catch ( AuthenticationException ae ) {
+                //无法判断的情形
+                logger.info("无法判断的情形");
+            }
+        }
+        return WebResponse.getSuccessResponse("登录失败");
+    }
+
+    @RequestMapping(value = "/{userName}", method = GET, produces = "application/json")
+    public Map<String, Object> getUser(@PathVariable String userName) {
+        UserInfo userInfo  = service.findByLoginName(userName);
         Map<String, Object> ret = new HashMap<>();
         ret.put("id", userInfo.getId());
-        Map<String, Object> response = WebResponse.getSuccessResponse(ret);
-        return response;
-    }
-
-    @RequestMapping(value = "/{userId}", method = GET, produces = "application/json")
-    public Map<String, Object> getUser(@PathVariable String userId) {
-        Map<String, Object> ret = new HashMap<>();
-        ret.put("id", userId);
-        Map<String, Object> response = WebResponse.getSuccessResponse(ret);
-        return response;
-    }
-
-    //ModelAttribute RequestBody
-    @RequestMapping(value = "/{userId}", method = PUT, produces = "application/json")
-    public Map<String, Object> getUser2(@PathVariable String userId, @RequestBody UserInfo userInfo) {
-        Map<String, Object> ret = new HashMap<>();
-        ret.put("name", userInfo.getLoginName());
+        ret.put("userName", userInfo.getLoginName());
+        ret.put("nickName", userInfo.getNickName());
+        ret.put("password", userInfo.getPassword());
         Map<String, Object> response = WebResponse.getSuccessResponse(ret);
         return response;
     }

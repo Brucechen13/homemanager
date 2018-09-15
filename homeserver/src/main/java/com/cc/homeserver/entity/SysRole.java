@@ -1,9 +1,12 @@
 package com.cc.homeserver.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 
 /**
@@ -11,6 +14,8 @@ import javax.persistence.*;
  */
 
 @Data
+@EqualsAndHashCode(exclude="userInfos")
+@ToString(exclude="userInfos")
 @Accessors(chain = true)
 @Entity
 @NamedEntityGraph(name = "SysRole.lazy", attributeNodes = {@NamedAttributeNode("userInfos")})
@@ -26,12 +31,12 @@ public class SysRole {
     //角色 -- 权限关系：多对多关系;
     @ManyToMany(fetch= FetchType.EAGER)
     @JoinTable(name="sys_role_permission",joinColumns={@JoinColumn(name="roleId")},inverseJoinColumns={@JoinColumn(name="permissionId")})
-    private List<SysPermission> permissions;
+    private Set<SysPermission> permissions;
 
     // 用户 - 角色关系定义;
     @ManyToMany
     @JoinTable(name="sys_user_role",joinColumns={@JoinColumn(name="roleId")},inverseJoinColumns={@JoinColumn(name="id")})
-    private List<UserInfo> userInfos;// 一个角色对应多个用户
+    private Set<UserInfo> userInfos;// 一个角色对应多个用户
 
     // 省略 get set 方法
 }

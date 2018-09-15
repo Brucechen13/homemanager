@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 实体类
@@ -27,7 +28,7 @@ public class UserInfo implements Serializable {
     @Column(unique=true, nullable=false)
     private String loginName;
     @Column(nullable=false)
-    private String userName;
+    private String nickName;
 
     @Column(nullable=false)
     private String salt;
@@ -49,7 +50,11 @@ public class UserInfo implements Serializable {
 
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "sys_user_role", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
-    private List<SysRole> roleList;// 一个用户具有多个角色
+    private Set<SysRole> roleList;// 一个用户具有多个角色
+
+//    @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
+//    @JoinTable(name = "tmp_user_family", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns ={@JoinColumn(name = "familyId") })
+//    private Set<UserFamily> familyList;// 一个用户具有多个角色
 }
 
 

@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.io.Serializable;
+import java.util.Set;
 import javax.persistence.*;
 
 @Data
@@ -26,7 +27,7 @@ public class SysPermission implements Serializable {
 
     @ManyToMany
     @JoinTable(name="sys_role_permission",joinColumns={@JoinColumn(name="permissionId")},inverseJoinColumns={@JoinColumn(name="roleId")})
-    private List<SysRole> roles;
+    private Set<SysRole> roles;
 
     // 省略 get set 方法
 }

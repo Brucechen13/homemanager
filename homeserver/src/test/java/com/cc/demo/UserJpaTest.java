@@ -6,6 +6,7 @@ import com.cc.homeserver.entity.SysRole;
 import com.cc.homeserver.entity.UserInfo;
 import com.cc.homeserver.repository.UserJpaRepository;
 import com.cc.homeserver.repository.UserRoleJpaRepository;
+import com.cc.homeserver.service.IUserService;
 import com.cc.homeserver.utils.ShiroUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -18,65 +19,48 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = App.class)
-@FixMethodOrder(MethodSorters.JVM)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserJpaTest {
 
     @Autowired
-    private UserJpaRepository userRepository;
-
-    @Autowired
-    private UserRoleJpaRepository userRoleRepository;
+    private IUserService service;
 
     @Test
-    public void testSearchAndDelete(){
-        UserInfo userInfo = userRepository.findByLoginName("1821059");
+    public void test00() {
+        System.out.println("test2");
+    }
+
+    @Test
+    public void test01(){
+        UserInfo userInfo = service.findByLoginName("1821059");
         if(userInfo != null){
             System.out.println("search user");
-            userRepository.delete(userInfo);
+            service.delete(userInfo);
         }
     }
 
     @Test
-    public void test1() {
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUserName("test1");
-        userInfo.setLoginName("1821059");
-        userInfo.setState(EnumTypeUtils.StateType.NORMAL);
-        String salt = ShiroUtils.generateSalt(20);
-        String password = ShiroUtils.encryptPassword("SHA-256", "test", salt, 16);
-        userInfo.setSalt(salt);
-        userInfo.setPassword(password);
-        SysRole role = userRoleRepository.findByRole("user");
-        if(userInfo.getRoleList() == null){
-            List<SysRole> roles = new ArrayList<>();
-            roles.add(role);
-            userInfo.setRoleList(roles);
-        }else{
-            userInfo.getRoleList().add(role);
-        }
-        userRepository.save(userInfo);
+    public void test02() {
+        service.saveUser("1821059", "test1", "test");
         System.out.println("save user");
     }
 
     @Test
-    public void test_fetch(){
-        UserInfo userInfo = userRepository.findByLoginName("1821059");
-        SysRole role = userRoleRepository.findByRole("user");
-        if(userInfo.getRoleList()!=null && userInfo.getRoleList().size() > 0){
-            SysRole role1 = userInfo.getRoleList().get(0);
-            SysRole role2 = userRoleRepository.findUsersByRole(role1.getRole());
-            System.out.println(userInfo.getRoleList().size() + " " + role.getRole()
-              + " " + role1.getUserInfos().size());
-        }
+    public void test03(){
+        boolean isLogin  = service.loginUser("1821059", "test");
+        System.out.println(isLogin);
+        assert isLogin;
+        isLogin  = service.loginUser("1821059", "test1");
+        assert !isLogin;
+        isLogin  = service.loginUser("18210592", "test2");
+        assert !isLogin;
     }
 
 
-    @Test
-    public void test2() {
-        System.out.println("test2");
-    }
 }

@@ -41,4 +41,8 @@ public class ShiroUtils {
         SimpleHash hash = new SimpleHash(hashAlgorithm, password, salt, hashIterations);
         return hash.toString();
     }
+
+    public static String encryptPassword(String password, String salt) {
+        return encryptPassword("SHA-256", password, salt, 16);
+    }
 }

@@ -8,11 +8,11 @@ public interface IUserService {
 
     public List<UserInfo> findAll();
 
-    public void saveUser(UserInfo book);
+    public void saveUser(String userName, String nickName, String password);
 
-    public UserInfo findOne(long id);
+    public boolean loginUser(String userName, String password);
 
-    public void delete(long id);
+    public void delete(UserInfo userInfo);
 
     public UserInfo findByLoginName(String name);
 }

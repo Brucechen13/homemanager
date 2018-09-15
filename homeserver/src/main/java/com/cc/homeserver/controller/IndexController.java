@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping(value = "/index")
 public class IndexController {
 
     @RequestMapping
@@ -22,7 +22,7 @@ public class IndexController {
     }
 
     // @RequestParam 简单类型的绑定，可以出来get和post
-    @RequestMapping(value = "/index/get")
+    @RequestMapping(value = "/map")
     public HashMap<String, Object> get(@RequestParam String name) {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("title", "hello world");

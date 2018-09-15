@@ -35,7 +35,7 @@ public class CustomRealm extends AuthorizingRealm {
         //设置用于匹配密码的CredentialsMatcher
         HashedCredentialsMatcher hashMatcher = new HashedCredentialsMatcher();
         hashMatcher.setHashAlgorithmName(Sha256Hash.ALGORITHM_NAME);
-        hashMatcher.setStoredCredentialsHexEncoded(false);
+        //hashMatcher.setStoredCredentialsHexEncoded(false);
         hashMatcher.setHashIterations(16);
         this.setCredentialsMatcher(hashMatcher);
     }
@@ -49,7 +49,9 @@ public class CustomRealm extends AuthorizingRealm {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
 
-        UserInfo user = (UserInfo) getAvailablePrincipal(principals);
+        String username = (String)getAvailablePrincipal(principals)
+
+        UserInfo user = service.findByLoginName(username);
 
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         Set<String> roles = new HashSet<>();
@@ -87,11 +89,11 @@ public class CustomRealm extends AuthorizingRealm {
             throw new UnknownAccountException("No account found for admin [" + username + "]");
         }
 
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userDB, userDB.getPassword(), getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userDB.getLoginName(),
+                userDB.getPassword(), getName());
         if (userDB.getSalt() != null) {
             info.setCredentialsSalt(ByteSource.Util.bytes(userDB.getSalt()));
         }
         return info;
     }
-
 }

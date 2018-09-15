@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Accessors(chain = true)
@@ -21,7 +22,7 @@ public class UserFamily {
     @Column(nullable=false)
     private String familyName;
 
-    @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
-    @JoinTable(name = "tmp_user_family", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns ={@JoinColumn(name = "userId") })
-    private List<UserInfo> userInfos;// 一个用户具有多个角色
+    @ManyToMany
+    @JoinTable(name = "tmp_user_family", joinColumns = { @JoinColumn(name = "familyId") }, inverseJoinColumns ={@JoinColumn(name = "id") })
+    private Set<UserInfo> userInfos;// 一个用户具有多个角色
 }
