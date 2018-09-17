@@ -116,7 +116,7 @@ public class UserController {
                 logger.info("无法判断的情形");
             }
         }
-        return WebResponse.getSuccessResponse("登录失败");
+        return WebResponse.getFailResponse("登录失败");
     }
 
     @RequestMapping(value = "/{userName}", method = GET, produces = "application/json")
