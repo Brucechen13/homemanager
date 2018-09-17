@@ -5,17 +5,15 @@ import java.util.Map;
 
 public class WebResponse{
 
-    public static Map<String, Object> getSuccessResponse(Object val){
-        Map<String, Object> res = new HashMap<>();
-        res.put("success", "true");
-        res.put("data", val);
-        return res;
+    public static JsonResponse getSuccessResponse(String msg){
+        return JsonResponse.succ(msg);
     }
 
-    public static Map<String, Object> getFailResponse(Object val){
-        Map<String, Object> res = new HashMap<>();
-        res.put("success", "false");
-        res.put("msg", val);
-        return res;
+    public static JsonResponse getSuccessResponse(String msg, Object val){
+        return JsonResponse.succ(msg, val);
+    }
+
+    public static JsonResponse getFailResponse(String msg){
+        return JsonResponse.fail(msg);
     }
 }

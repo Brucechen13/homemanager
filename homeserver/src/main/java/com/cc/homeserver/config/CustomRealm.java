@@ -49,7 +49,7 @@ public class CustomRealm extends AuthorizingRealm {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
 
-        String username = (String)getAvailablePrincipal(principals)
+        String username = (String)getAvailablePrincipal(principals);
 
         UserInfo user = service.findByLoginName(username);
 

@@ -9,5 +9,5 @@ INSERT INTO `sys_role` (`id`,`available`,`description`,`role`) VALUES (3,1,'æ™®é
 INSERT INTO `sys_role_permission` (`permissionId`,`roleId`) VALUES (1,1);
 INSERT INTO `sys_role_permission` (`permissionId`,`roleId`) VALUES (2,1);
 INSERT INTO `sys_role_permission` (`permissionId`,`roleId`) VALUES (3,2);
-INSERT INTO `sys_user_role` (`roleId`,`id`) VALUES (1,1);
+INSERT INTO `sys_user_role` (`roleId`,`uid`) VALUES (1,1);
 

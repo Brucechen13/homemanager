@@ -1,6 +1,8 @@
 package com.cc.homeserver.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.List;
@@ -9,6 +11,8 @@ import java.util.Set;
 import javax.persistence.*;
 
 @Data
+@EqualsAndHashCode(exclude="roles")
+@ToString(exclude="roles")
 @Accessors(chain = true)
 @Entity
 @Table(name = "sys_permission")

@@ -83,6 +83,9 @@ public class ShiroConfig {
         chain.addPathDefinition("/page/403", "anon");
         chain.addPathDefinition("/t5/hello", "anon");
         chain.addPathDefinition("/index/**", "anon");
+        chain.addPathDefinition("/swagger*/**", "anon");
+        chain.addPathDefinition("/v2/**", "anon");
+        chain.addPathDefinition("/webjars/**", "anon");
 
         //除了以上的请求外，其它请求都需要登录
         //chain.addPathDefinition("/**", "authc");

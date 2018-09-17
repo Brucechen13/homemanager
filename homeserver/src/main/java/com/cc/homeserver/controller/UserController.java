@@ -3,6 +3,7 @@ package com.cc.homeserver.controller;
 
 import com.cc.homeserver.entity.UserInfo;
 import com.cc.homeserver.service.IUserService;
+import com.cc.homeserver.utils.JsonResponse;
 import com.cc.homeserver.utils.ShiroUtils;
 import com.cc.homeserver.utils.WebResponse;
 import org.apache.shiro.SecurityUtils;
@@ -51,14 +52,13 @@ public class UserController {
     }
 
     @RequestMapping(value = "/save", method = POST, produces = "application/json")
-    public Map<String, Object> saveUser(String userName, String nickName, String password) {
+    public JsonResponse saveUser(String userName, String nickName, String password) {
         service.saveUser(userName, nickName, password);
-        Map<String, Object> response = WebResponse.getSuccessResponse("注册成功");
-        return response;
+        return WebResponse.getSuccessResponse("注册成功");
     }
 
     @RequestMapping(value = "/login", method = POST, produces = "application/json")
-    public Map<String, Object> loginUser(String userName, String password){
+    public JsonResponse loginUser(String userName, String password){
         // 安全操作
         Subject currentUser = SecurityUtils.getSubject();
 
@@ -120,14 +120,13 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{userName}", method = GET, produces = "application/json")
-    public Map<String, Object> getUser(@PathVariable String userName) {
+    public JsonResponse getUser(@PathVariable String userName) {
         UserInfo userInfo  = service.findByLoginName(userName);
         Map<String, Object> ret = new HashMap<>();
         ret.put("id", userInfo.getId());
         ret.put("userName", userInfo.getLoginName());
         ret.put("nickName", userInfo.getNickName());
         ret.put("password", userInfo.getPassword());
-        Map<String, Object> response = WebResponse.getSuccessResponse(ret);
-        return response;
+        return WebResponse.getSuccessResponse("用户信息", ret);
     }
 }

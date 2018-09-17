@@ -1,6 +1,8 @@
 package com.cc.homeserver.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import javax.validation.constraints.NotBlank;
 
@@ -49,12 +51,12 @@ public class UserInfo implements Serializable {
 
 
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
-    @JoinTable(name = "sys_user_role", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
+    @JoinTable(name = "sys_user_role", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
     private Set<SysRole> roleList;// 一个用户具有多个角色
 
-//    @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
-//    @JoinTable(name = "tmp_user_family", joinColumns = { @JoinColumn(name = "id") }, inverseJoinColumns ={@JoinColumn(name = "familyId") })
-//    private Set<UserFamily> familyList;// 一个用户具有多个角色
+    @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
+    @JoinTable(name = "tmp_user_family", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "familyId") })
+    private Set<UserFamily> familyList;// 一个用户具有多个角色
 }
 
 
