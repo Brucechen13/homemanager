@@ -78,6 +78,15 @@ public class UserController {
             try{
                 currentUser.login(token);
 
+                // Session session = currentUser.getSession(true);
+
+                //主机
+                System.out.println("host:"+session.getHost());
+                //session超时时间
+                session.setTimeout(1500000);
+                //属性参数值
+                session.setAttribute("name", currentUser.getPrincipal());
+
                 //当我们获登录用户之后
                 logger.info("User [" + currentUser.getPrincipal() + "] logged in successfully.");
 
@@ -86,7 +95,7 @@ public class UserController {
                 if ( currentUser.hasRole( "client" ) ) {
                     logger.info("Look is in your role" );
                 } else {
-                    logger.info( "....." );
+                    logger.info( "Look isnot in your role" );
                 }
 
                 // 查看用户是否有某个权限

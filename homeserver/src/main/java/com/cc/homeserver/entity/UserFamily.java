@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import java.util.Set;
 @Accessors(chain = true)
 @Entity
 @Table(name = "user_family")
-public class UserFamily {
+public class UserFamily implements Serializable {
     @Id
     @GeneratedValue
     private int id;

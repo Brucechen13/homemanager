@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
@@ -20,7 +21,7 @@ import javax.persistence.*;
 @Entity
 @NamedEntityGraph(name = "SysRole.lazy", attributeNodes = {@NamedAttributeNode("userInfos")})
 @Table(name = "sys_role")
-public class SysRole {
+public class SysRole implements Serializable {
     @Id
     @GeneratedValue
     private Integer id; // 编号

@@ -49,9 +49,9 @@ public class CustomRealm extends AuthorizingRealm {
             throw new AuthorizationException("PrincipalCollection method argument cannot be null.");
         }
 
-        String username = (String)getAvailablePrincipal(principals);
+        //String username = (String)getAvailablePrincipal(principals);
 
-        UserInfo user = service.findByLoginName(username);
+        UserInfo user = (UserInfo)getAvailablePrincipal(principals);//service.findByLoginName(username);
 
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         Set<String> roles = new HashSet<>();
@@ -89,8 +89,8 @@ public class CustomRealm extends AuthorizingRealm {
             throw new UnknownAccountException("No account found for admin [" + username + "]");
         }
 
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userDB.getLoginName(),
-                userDB.getPassword(), getName());
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(userDB,
+                userDB.getPassword(), getName());//.getLoginName()
         if (userDB.getSalt() != null) {
             info.setCredentialsSalt(ByteSource.Util.bytes(userDB.getSalt()));
         }
