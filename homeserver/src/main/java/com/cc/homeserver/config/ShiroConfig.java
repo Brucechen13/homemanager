@@ -79,6 +79,7 @@ public class ShiroConfig {
         //chain.addPathDefinition("/**", "anon"); // all paths are managed via annotations
         //哪些请求可以匿名访问
         chain.addPathDefinition("/user/login", "anon");
+        chain.addPathDefinition("/user/save", "anon");
         chain.addPathDefinition("/page/401", "anon");
         chain.addPathDefinition("/page/403", "anon");
         chain.addPathDefinition("/t5/hello", "anon");
@@ -88,7 +89,7 @@ public class ShiroConfig {
         chain.addPathDefinition("/webjars/**", "anon");
 
         //除了以上的请求外，其它请求都需要登录
-        //chain.addPathDefinition("/**", "authc");
+        chain.addPathDefinition("/**", "authc");
         return chain;
     }
 

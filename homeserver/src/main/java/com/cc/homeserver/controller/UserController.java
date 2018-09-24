@@ -57,6 +57,11 @@ public class UserController {
         return WebResponse.getSuccessResponse("注册成功");
     }
 
+    @RequestMapping(value = "/islogin", method = POST, produces = "application/json")
+    public JsonResponse isLogin(String userName, String nickName, String password) {
+        return WebResponse.getSuccessResponse("已经登录");
+    }
+
     @RequestMapping(value = "/login", method = POST, produces = "application/json")
     public JsonResponse loginUser(String userName, String password){
         // 安全操作
