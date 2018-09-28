@@ -81,6 +81,24 @@ public class UserController {
             //尝试进行登录用户，如果登录失败了，我们进行一些处理
 
             try{
+                final LinkedHashMap<Object, Object> attributes = new LinkedHashMap<Object, Object>();
+        	final Collection<Object> keys = session.getAttributeKeys();
+        	for ( Object key : keys )
+        	{
+        	    final Object value = session.getAttribute( key );
+        	    if ( value != null )
+        	    {
+        	        attributes.put( key, value );
+        	    }
+        	}
+        	session.stop();
+        	subject.login( token );
+        	// Restore the attributes.
+        	session = subject.getSession();
+        	for ( final Object key : attributes.keySet() )
+        	{
+        	    session.setAttribute( key, attributes.get( key ) );
+        	}
                 currentUser.login(token);
 
                 // Session session = currentUser.getSession(true);
@@ -88,7 +106,7 @@ public class UserController {
                 //主机
                 System.out.println("host:"+session.getHost());
                 //session超时时间
-                session.setTimeout(1500000);
+                //session.setTimeout(1500000);
                 //属性参数值
                 session.setAttribute("name", currentUser.getPrincipal());
 
