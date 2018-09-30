@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -57,22 +56,22 @@ public class UserController {
         return WebResponse.getSuccessResponse("注册成功");
     }
 
-    @RequestMapping(value = "/islogin", method = POST, produces = "application/json")
+    @RequestMapping(value = "/islogin", method = GET, produces = "application/json")
     public JsonResponse isLogin(String userName, String nickName, String password) {
         return WebResponse.getSuccessResponse("已经登录");
     }
 
     @RequestMapping(value = "/login", method = POST, produces = "application/json")
-    public JsonResponse loginUser(String userName, String password){
+    public JsonResponse loginUser(String userName, String password) {
         // 安全操作
         Subject currentUser = SecurityUtils.getSubject();
 
         // 在应用的当前会话中设置属性
-        Session session =  currentUser.getSession();
-        session.setAttribute("key","value");
+        Session session = currentUser.getSession();
+        session.setAttribute("key", "value");
 
         //当前我们的用户是匿名的用户，我们尝试进行登录，
-        if (!currentUser.isAuthenticated()){
+        if (!currentUser.isAuthenticated()) {
             UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
 
             //this is all you have to do to support 'remember me' (no config - built in!):
@@ -80,31 +79,27 @@ public class UserController {
 
             //尝试进行登录用户，如果登录失败了，我们进行一些处理
 
-            try{
+            try {
                 final LinkedHashMap<Object, Object> attributes = new LinkedHashMap<Object, Object>();
-        	final Collection<Object> keys = session.getAttributeKeys();
-        	for ( Object key : keys )
-        	{
-        	    final Object value = session.getAttribute( key );
-        	    if ( value != null )
-        	    {
-        	        attributes.put( key, value );
-        	    }
-        	}
-        	session.stop();
-        	subject.login( token );
-        	// Restore the attributes.
-        	session = subject.getSession();
-        	for ( final Object key : attributes.keySet() )
-        	{
-        	    session.setAttribute( key, attributes.get( key ) );
-        	}
+                final Collection<Object> keys = session.getAttributeKeys();
+                for (Object key : keys) {
+                    final Object value = session.getAttribute(key);
+                    if (value != null) {
+                        attributes.put(key, value);
+                    }
+                }
+                session.stop();
                 currentUser.login(token);
+                // Restore the attributes.
+                session = currentUser.getSession();
+                for (final Object key : attributes.keySet()) {
+                    session.setAttribute(key, attributes.get(key));
+                }
 
                 // Session session = currentUser.getSession(true);
 
                 //主机
-                System.out.println("host:"+session.getHost());
+                System.out.println("host:" + session.getHost());
                 //session超时时间
                 //session.setTimeout(1500000);
                 //属性参数值
@@ -115,14 +110,14 @@ public class UserController {
 
 
                 // 查看用户是否有指定的角色
-                if ( currentUser.hasRole( "client" ) ) {
-                    logger.info("Look is in your role" );
+                if (currentUser.hasRole("client")) {
+                    logger.info("Look is in your role");
                 } else {
-                    logger.info( "Look isnot in your role" );
+                    logger.info("Look isnot in your role");
                 }
 
                 // 查看用户是否有某个权限
-                if ( currentUser.isPermitted( "look:desk" ) ) {
+                if (currentUser.isPermitted("look:desk")) {
                     logger.info("You can look.  Use it wisely.");
                 } else {
                     logger.info("Sorry, you can't look.");
@@ -133,17 +128,16 @@ public class UserController {
                 // currentUser.logout();
                 return WebResponse.getSuccessResponse("登录成功");
 
-            }
-            catch ( UnknownAccountException uae ) {
+            } catch (UnknownAccountException uae) {
                 //账户不存在的操作
                 logger.info("账户不存在的操作");
-            } catch ( IncorrectCredentialsException ice ) {
+            } catch (IncorrectCredentialsException ice) {
                 //密码不正确
                 logger.info("密码不正确");
-            } catch ( LockedAccountException lae ) {
+            } catch (LockedAccountException lae) {
                 //用户被锁定了
                 logger.info("用户被锁定了");
-            } catch ( AuthenticationException ae ) {
+            } catch (AuthenticationException ae) {
                 //无法判断的情形
                 logger.info("无法判断的情形");
             }
@@ -151,7 +145,7 @@ public class UserController {
         return WebResponse.getFailResponse("登录失败");
     }
 
-    @RequestMapping(value = "/{userName}", method = GET, produces = "application/json")
+    @RequestMapping(value = "/user/{userName}", method = GET, produces = "application/json")
     public JsonResponse getUser(@PathVariable String userName) {
         UserInfo userInfo  = service.findByLoginName(userName);
         Map<String, Object> ret = new HashMap<>();

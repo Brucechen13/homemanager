@@ -29,14 +29,17 @@ public class GlobalExceptionHandler {
      * @return 状态码和错误信息
      */
     @org.springframework.web.bind.annotation.ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity<String> handleDuplicateKeyException(DuplicateKeyException e) {
+    @ResponseBody
+    public JsonResponse handleDuplicateKeyException(DuplicateKeyException e) {
         logger.error(e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("数据库中已存在该记录");
+        return new JsonResponse("401", false, Codes.SQL_ERR, "数据库中已存在该记录", null);
     }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(AuthorizationException.class)
-    public ResponseEntity<String> handleAuthorizationException(AuthorizationException e) {
+    @ResponseBody
+    public JsonResponse handleAuthorizationException(AuthorizationException e) {
         logger.error(e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("没有权限，请联系管理员授权");
+        return new JsonResponse("401", false, Codes.SHIRO_ERR, "没有权限，请联系管理员授权", null);
     }
     /**
      * 处理异常
@@ -45,9 +48,11 @@ public class GlobalExceptionHandler {
      * @return 状态码
      */
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception e) {
+    @ResponseBody
+    public JsonResponse handleException(Exception e) {
         logger.error(e.getMessage(), e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return new JsonResponse("401", false, Codes.SERVER_ERR,
+                "服务器出现错误", null);
     }
 
     //不满足@RequiresGuest注解时抛出的异常信息

@@ -14,4 +14,7 @@ public interface Codes {
     /** 服务端异常 */
     int SERVER_ERR = 5500;
 
+    /** 数据库异常 */
+    int SQL_ERR = 6666;
+
 }

@@ -56,7 +56,7 @@ public class UserInfo implements Serializable {
 
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "tmp_user_family", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "familyId") })
-    private Set<UserFamily> familyList;// 一个用户具有多个角色
+    private Set<UserFamily> familyList;// 加入的家庭组
 }
 
 

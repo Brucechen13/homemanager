@@ -36,22 +36,6 @@ public class ShiroConfig {
         return sessionManager;
     }
 
-    /**
-     * 注册安全管理,必须设置 SecurityManager
-     *
-     * @param oAuth2Realm    认证
-     * @param sessionManager 缓存
-     * @return
-     */
-//    @Bean
-//    public SecurityManager securityManager(CustomRealm oAuth2Realm, SessionManager sessionManager) {
-//        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-//        // 可以添加多个认证，执行顺序是有影响的
-//        securityManager.setRealm(oAuth2Realm);
-//        securityManager.setSessionManager(sessionManager);
-//        return securityManager;
-//    }
-
     @Bean
     public static DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();

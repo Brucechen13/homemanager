@@ -1,3 +1,6 @@
+CREATE DATABASE testdata DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+USER testdata;
 
 INSERT INTO `user_info` (`id`,`loginName`,`nickName`,`password`,`salt`,`state`) VALUES ('1000', 'admin', '管理员', 'd3c59d25033dbf980d29554025c23a75', '8d78869f470951332959580424d4bf4f', 0);
 INSERT INTO `sys_permission` (`id`,`available`,`name`,`parentId`,`parentIds`,`permission`,`resourceType`,`url`) VALUES (1,0,'用户管理',0,'0/','userInfo:view','menu','userInfo/userList');

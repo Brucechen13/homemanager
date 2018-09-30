@@ -5,9 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.cc.homeserver.entity.EnumTypeUtils;
-import com.cc.homeserver.entity.SysRole;
-import com.cc.homeserver.entity.UserInfo;
+import com.cc.homeserver.entity.*;
+import com.cc.homeserver.repository.FamilyJpaRepository;
 import com.cc.homeserver.repository.UserJpaRepository;
 import com.cc.homeserver.repository.UserRoleJpaRepository;
 import com.cc.homeserver.service.IUserService;
@@ -26,6 +25,8 @@ public class UserServiceImpl implements IUserService
     private UserJpaRepository userRepository;
     @Autowired
     private UserRoleJpaRepository userRoleRepository;
+    @Autowired
+    private FamilyJpaRepository familyJpaRepository;
 
     public List<UserInfo> findAll()
     {
@@ -53,6 +54,7 @@ public class UserServiceImpl implements IUserService
         Set<SysRole> roles = new HashSet<>();
         roles.add(role);
         userInfo.setRoleList(roles);
+        userInfo.setFamilyList(new HashSet<>());
         userRepository.save(userInfo);
     }
 
@@ -70,5 +72,92 @@ public class UserServiceImpl implements IUserService
     public void delete(UserInfo userInfo)
     {
         userRepository.delete(userInfo);
+    }
+
+
+
+    @Override
+    public void addFamily(UserInfo userInfo, String familyName) {
+        UserFamily family = new UserFamily();
+        family.setCreateUser(userInfo);
+        family.setFamilyName(familyName);
+        HashSet<UserInfo> users = new HashSet<>();
+        users.add(userInfo);
+        family.setUserInfos(users);
+        familyJpaRepository.save(family);
+    }
+
+    @Override
+    public void addFamilyUser(UserInfo userInfo, String familyName, UserInfo addUser) {
+        for (UserFamily userFamily:
+             userInfo.getFamilyList()) {
+            if(userFamily.getFamilyName().equals(familyName)){
+                UserFamily family = familyJpaRepository.findById(userFamily.getId());
+                family.getUserInfos().add(addUser);
+                familyJpaRepository.save(family);
+            }
+        }
+    }
+
+    @Override
+    public void removeFamilyUser(UserInfo userInfo, String familyName, UserInfo removeUser) {
+        for (UserFamily userFamily:
+                userInfo.getFamilyList()) {
+            if(userFamily.getFamilyName().equals(familyName)){
+                UserFamily family = familyJpaRepository.findById(userFamily.getId());
+                if(family.getUserInfos().contains(removeUser)) {
+                    family.getUserInfos().remove(removeUser);
+                    familyJpaRepository.save(family);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Set<OutUserInfo> getFamilyUsers(UserInfo userInfo, String familyName) {
+        for (UserFamily userFamily:
+                userInfo.getFamilyList()) {
+            if(userFamily.getFamilyName().equals(familyName)){
+                UserFamily family = familyJpaRepository.findById(userFamily.getId());
+
+
+                Set<OutUserInfo> data = new HashSet<>();
+                for (UserInfo info:
+                        family.getUserInfos()) {
+                    OutUserInfo outUserinfo = new OutUserInfo();
+                    outUserinfo.parseFromUserInfo(info);
+                    data.add(outUserinfo);
+                }
+
+                return data;
+            }
+        }
+        return new HashSet<>();
+    }
+
+    @Override
+    public Set<OutFamilyInfo> getAllFamilys(UserInfo userInfo) {
+        Set<OutFamilyInfo> familyNames = new HashSet<>();
+        for (UserFamily family:
+                userInfo.getFamilyList()) {
+            OutFamilyInfo familyInfo = new OutFamilyInfo();
+            familyInfo.parseFromFamilyInfo(family);
+            familyNames.add(familyInfo);
+        }
+        return familyNames;
+    }
+
+    @Override
+    public Set<OutFamilyInfo> getAllCreateFamilys(UserInfo userInfo) {
+        Set<OutFamilyInfo> familyNames = new HashSet<>();
+        for (UserFamily family:
+                userInfo.getFamilyList()) {
+            if(family.getCreateUser().getLoginName().equals(userInfo.getLoginName())) {
+                OutFamilyInfo familyInfo = new OutFamilyInfo();
+                familyInfo.parseFromFamilyInfo(family);
+                familyNames.add(familyInfo);
+            }
+        }
+        return familyNames;
     }
 }
