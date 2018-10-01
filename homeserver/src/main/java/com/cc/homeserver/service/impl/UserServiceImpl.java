@@ -140,6 +140,7 @@ public class UserServiceImpl implements IUserService
         Set<OutFamilyInfo> familyNames = new HashSet<>();
         for (UserFamily family:
                 userInfo.getFamilyList()) {
+            family = familyJpaRepository.findById(family.getId());
             OutFamilyInfo familyInfo = new OutFamilyInfo();
             familyInfo.parseFromFamilyInfo(family);
             familyNames.add(familyInfo);
@@ -153,6 +154,7 @@ public class UserServiceImpl implements IUserService
         for (UserFamily family:
                 userInfo.getFamilyList()) {
             if(family.getCreateUser().getLoginName().equals(userInfo.getLoginName())) {
+                family = familyJpaRepository.findById(family.getId());
                 OutFamilyInfo familyInfo = new OutFamilyInfo();
                 familyInfo.parseFromFamilyInfo(family);
                 familyNames.add(familyInfo);
