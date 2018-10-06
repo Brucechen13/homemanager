@@ -1,5 +1,7 @@
 package com.cc.homeserver.handle;
 
+import com.cc.homeserver.entity.SocketMessage;
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -12,6 +14,17 @@ import java.util.ArrayList;
 
 /**
  * Websocket处理器
+ * user:
+ * 1.建立连接
+ * 2.发送消息
+ * 3.接收消息
+ *
+ * 消息类型：
+ * type 0: 申请添加家庭组
+ * type 1: 申请添加用户到家庭组
+ * type 2: 用户消息
+ *
+ * 消息缓存在redis中
  */
 
 public class WebSocketHandler extends TextWebSocketHandler {
@@ -31,14 +44,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String username = (String) session.getAttributes().get("WEBSOCKET_USERNAME");
+        Gson gson = new Gson();
+        SocketMessage sm = gson.fromJson(message.getPayload(), SocketMessage.class);
         // 获取提交过来的消息详情
         LOGGER.info("收到用户 " + username + "的消息:" + message.toString());
         //回复一条信息，
-        session.sendMessage(new TextMessage("reply msg:" + message.getPayload()));
-        for (WebSocketSession sess:
-                users) {
-            sess.sendMessage(new TextMessage("new msg from user:" + username));
-        }
+        session.sendMessage(new TextMessage("reply msg:" + sm.getMsg()));
     }
 
 
@@ -51,11 +62,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        for (WebSocketSession sess:
-                users) {
-            sess.sendMessage(new TextMessage("new connect from user:" +
-                    (String) session.getAttributes().get("WEBSOCKET_USERNAME")));
-        }
+        sendMessageToUsers(new TextMessage("new connect from user:" +
+                (String) session.getAttributes().get("WEBSOCKET_USERNAME")));
         users.add(session);
         String username = (String) session.getAttributes().get("WEBSOCKET_USERNAME");
         LOGGER.info("用户 " + username + " Connection Established");
