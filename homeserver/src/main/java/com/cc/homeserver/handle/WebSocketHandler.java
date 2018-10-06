@@ -4,6 +4,8 @@ import com.cc.homeserver.entity.SocketMessage;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -30,6 +32,9 @@ import java.util.ArrayList;
 public class WebSocketHandler extends TextWebSocketHandler {
     private final static Logger LOGGER = LoggerFactory.getLogger(WebSocketHandler.class);
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     //已建立连接的用户
     private static final ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();
 
@@ -48,6 +53,21 @@ public class WebSocketHandler extends TextWebSocketHandler {
         SocketMessage sm = gson.fromJson(message.getPayload(), SocketMessage.class);
         // 获取提交过来的消息详情
         LOGGER.info("收到用户 " + username + "的消息:" + message.toString());
+        switch (sm.getType()){
+            case 0:
+                //sender申请加入receiver家庭组
+                redisTemplate.opsForList().rightPush(sm.getReceiver(), sm.getMsg());
+                break;
+            case 1:
+                //sender申请添加receiver进入家庭组
+                for(int i=0;i<=redisTemplate.opsForList().size(sm.getReceiver());i++){
+                    System.out.println(redisTemplate.opsForList().leftPop(sm.getReceiver()));
+                }
+                break;
+            case 2:
+                //sender向receiver发送消息
+                break;
+        }
         //回复一条信息，
         session.sendMessage(new TextMessage("reply msg:" + sm.getMsg()));
     }

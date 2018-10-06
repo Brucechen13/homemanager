@@ -13,6 +13,9 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        maven {
+            url 'https://repo.spring.io/libs-release'
+        }
 
     }
     dependencies {
@@ -45,6 +48,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-devtools:2.0.1.RELEASE'
     testCompile 'org.springframework.boot:spring-boot-starter-test:2.0.1.RELEASE'
     testCompile group: 'org.springframework', name: 'spring-test', version: '4.2.1.RELEASE'
+    compile 'org.springframework.data:spring-data-redis:2.0.1.RELEASE'
     //shiro
     compile 'org.apache.shiro:shiro-spring-boot-web-starter:1.4.0'
     //其它
