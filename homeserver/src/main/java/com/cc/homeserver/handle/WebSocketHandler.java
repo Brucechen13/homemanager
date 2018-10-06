@@ -35,6 +35,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
         LOGGER.info("收到用户 " + username + "的消息:" + message.toString());
         //回复一条信息，
         session.sendMessage(new TextMessage("reply msg:" + message.getPayload()));
+        for (WebSocketSession sess:
+                users) {
+            sess.sendMessage(new TextMessage("new msg from other:" + username));
+        }
     }
 
 

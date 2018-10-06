@@ -56,7 +56,7 @@ public class FamilyController {
         return WebResponse.getSuccessResponse("申请加入家庭组成功");
     }
 
-    @RequestMapping(value = "/members", method = POST, produces = "application/json")
+    @RequestMapping(value = "/members", method = GET, produces = "application/json")
     public JsonResponse members(String familyName) {
         Subject subject = SecurityUtils.getSubject();
         // 取身份信息
@@ -67,7 +67,7 @@ public class FamilyController {
         return WebResponse.getSuccessResponse("获得家庭组成员", infos);
     }
 
-    @RequestMapping(value = "/familys", method = POST, produces = "application/json")
+    @RequestMapping(value = "/familys", method = GET, produces = "application/json")
     public JsonResponse familys() {
         Subject subject = SecurityUtils.getSubject();
         // 取身份信息
