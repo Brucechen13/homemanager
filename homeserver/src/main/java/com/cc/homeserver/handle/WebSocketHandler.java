@@ -61,7 +61,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String userName = (String)user.getAttributes().get("WEBSOCKET_USERNAME");
             long size = redisTemplate.opsForList().size(userName);
             if (size > 0) {
-                List<String> ops = redisTemplate.opsForList().range(userName, 0, size);
+                List<String> ops = new ArrayList<>();
+                while (size-- > 0){
+                    ops.add((String)redisTemplate.opsForList().leftPop(userName));
+                }
                 try {
                     Gson gson = new Gson();
                     String json = gson.toJson(ops, new TypeToken<List<String>>() {}.getType());
