@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -30,7 +32,7 @@ import java.util.ArrayList;
  *
  * 消息缓存在redis中
  */
-
+@Component
 public class WebSocketHandler extends TextWebSocketHandler {
     private final static Logger LOGGER = LoggerFactory.getLogger(WebSocketHandler.class);
 
@@ -49,6 +51,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     //已建立连接的用户
     private static final ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();
+
+    @Scheduled(fixedRate = 1000*10)
+    public void print() {
+        sendMessageToUsers(new TextMessage("Scheduled event"));
+    }
 
     /**
      * 处理前端发送的文本信息
