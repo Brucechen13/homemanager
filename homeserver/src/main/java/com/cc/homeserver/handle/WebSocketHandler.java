@@ -2,6 +2,7 @@ package com.cc.homeserver.handle;
 
 import com.cc.homeserver.entity.SocketMessage;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Websocket处理器
@@ -55,7 +57,23 @@ public class WebSocketHandler extends TextWebSocketHandler {
     @Scheduled(fixedRate = 1000*10)
     public void print() {
         LOGGER.info("Scheduled event");
-        sendMessageToUsers(new TextMessage("Scheduled event"));
+        for (WebSocketSession user : users) {
+            String userName = (String)user.getAttributes().get("WEBSOCKET_USERNAME");
+            long size = redisTemplate.opsForList().size(userName);
+            if (size > 0) {
+                List<String> ops = redisTemplate.opsForList().range(userName, 0, size);
+                try {
+                    Gson gson = new Gson();
+                    String json = gson.toJson(ops, new TypeToken<List<String>>() {}.getType());
+                    if (user.isOpen()) {
+                        user.sendMessage(new TextMessage(json));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
     }
 
     /**
