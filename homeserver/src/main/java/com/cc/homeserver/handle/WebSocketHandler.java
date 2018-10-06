@@ -37,7 +37,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage("reply msg:" + message.getPayload()));
         for (WebSocketSession sess:
                 users) {
-            sess.sendMessage(new TextMessage("new msg from other:" + username));
+            sess.sendMessage(new TextMessage("new msg from user:" + username));
         }
     }
 
@@ -51,6 +51,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
      */
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        for (WebSocketSession sess:
+                users) {
+            sess.sendMessage(new TextMessage("new connect from user:" +
+                    (String) session.getAttributes().get("WEBSOCKET_USERNAME")));
+        }
         users.add(session);
         String username = (String) session.getAttributes().get("WEBSOCKET_USERNAME");
         LOGGER.info("用户 " + username + " Connection Established");
