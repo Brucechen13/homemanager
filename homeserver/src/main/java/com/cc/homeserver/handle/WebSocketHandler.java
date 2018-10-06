@@ -54,6 +54,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Scheduled(fixedRate = 1000*10)
     public void print() {
+        LOGGER.info("Scheduled event");
         sendMessageToUsers(new TextMessage("Scheduled event"));
     }
 
