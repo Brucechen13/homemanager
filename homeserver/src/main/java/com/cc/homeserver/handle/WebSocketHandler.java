@@ -63,7 +63,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             if (size > 0) {
                 List<String> ops = new ArrayList<>();
                 while (size-- > 0){
-                    ops.add((String)redisTemplate.opsForList().leftPop(userName));
+                    ops.add((String)redisTemplate.opsForList().rightPop(userName));
                 }
                 try {
                     Gson gson = new Gson();
@@ -97,18 +97,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
         switch (sm.getType()){
             case 0:
                 //sender申请加入receiver家庭组
-                redisTemplate.opsForList().rightPush(sm.getReceiver(), sm.getMsg());
                 break;
             case 1:
                 //sender申请添加receiver进入家庭组
-                for(int i=0;i<=redisTemplate.opsForList().size(sm.getReceiver());i++){
-                    System.out.println(redisTemplate.opsForList().leftPop(sm.getReceiver()));
-                }
                 break;
             case 2:
                 //sender向receiver发送消息
                 break;
         }
+        redisTemplate.opsForList().leftPush(sm.getReceiver(), message.getPayload());
         //回复一条信息，
         session.sendMessage(new TextMessage("reply msg:" + sm.getMsg()));
     }

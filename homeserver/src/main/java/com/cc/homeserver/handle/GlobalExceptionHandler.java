@@ -67,6 +67,14 @@ public class GlobalExceptionHandler {
         return new JsonResponse(eName, false, Codes.SHIRO_ERR, "鉴权或授权过程出错", null);
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(BusinessException.class)
+    @ResponseBody
+    public JsonResponse handleBusinessException(BusinessException e) {
+        String eName = e.getClass().getSimpleName();
+        logger.error("程序出错", eName);
+        return new JsonResponse(eName, false, Codes.SHIRO_ERR, "程序出错" + e.getResultEnum(), null);
+    }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(UnauthenticatedException.class)
     @ResponseBody
     public JsonResponse page401(UnauthenticatedException e) {
