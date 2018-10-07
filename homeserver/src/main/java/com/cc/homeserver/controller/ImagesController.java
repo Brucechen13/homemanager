@@ -49,7 +49,7 @@ public class ImagesController {
             @ApiImplicitParam(name = "title", value = "title", required = true)}
     )
     @RequestMapping(value="/upload",method = POST)
-    public JsonResponse uploadImg(@RequestParam("editormd-image-file") MultipartFile[] multipartFiles, String title)  throws Exception{
+    public JsonResponse uploadImg(@RequestParam(value="file") MultipartFile[] multipartFiles, String title)  throws Exception{
         for(MultipartFile multipartFile : multipartFiles) {
             if (multipartFile.isEmpty() || StringUtils.isBlank(multipartFile.getOriginalFilename())) {
                 throw new BusinessException(ResultEnum.IMG_NOT_EMPTY);

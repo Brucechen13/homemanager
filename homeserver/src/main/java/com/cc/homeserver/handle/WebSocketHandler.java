@@ -56,7 +56,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Scheduled(fixedRate = 1000*10)
     public void print() {
-        LOGGER.info("Scheduled event");
+        //LOGGER.info("Scheduled event");
         for (WebSocketSession user : users) {
             String userName = (String)user.getAttributes().get("WEBSOCKET_USERNAME");
             long size = redisTemplate.opsForList().size(userName);
