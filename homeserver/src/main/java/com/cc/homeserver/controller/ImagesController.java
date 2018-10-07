@@ -40,27 +40,29 @@ public class ImagesController {
     }
 
     @PutMapping("/article/img/upload")
-    public JsonResponse uploadImg(@RequestParam("editormd-image-file") MultipartFile multipartFile)  throws Exception{
-        if (multipartFile.isEmpty() || StringUtils.isBlank(multipartFile.getOriginalFilename())) {
-            throw new BusinessException(ResultEnum.IMG_NOT_EMPTY);
-        }
-        String contentType = multipartFile.getContentType();
-        if (!contentType.contains("")) {
-            throw new BusinessException(ResultEnum.IMG_FORMAT_ERROR);
-        }
-        String root_fileName = multipartFile.getOriginalFilename();
-        logger.info("上传图片:name={},type={}", root_fileName, contentType);
+    public JsonResponse uploadImg(@RequestParam("editormd-image-file") MultipartFile[] multipartFiles)  throws Exception{
+        for(MultipartFile multipartFile : multipartFiles) {
+            if (multipartFile.isEmpty() || StringUtils.isBlank(multipartFile.getOriginalFilename())) {
+                throw new BusinessException(ResultEnum.IMG_NOT_EMPTY);
+            }
+            String contentType = multipartFile.getContentType();
+            if (!contentType.contains("")) {
+                throw new BusinessException(ResultEnum.IMG_FORMAT_ERROR);
+            }
+            String root_fileName = multipartFile.getOriginalFilename();
+            logger.info("上传图片:name={},type={}", root_fileName, contentType);
 
-        //获取路径
-        String filePath = location;
-        logger.info("图片保存路径={}", filePath);
-        String file_name = null;
-        try {
-            file_name = ImageUtil.saveImg(multipartFile, filePath);
-            return JsonResponse.succ("上传成功" + file_name);
-        } catch (IOException e) {
-            throw new BusinessException(ResultEnum.SAVE_IMG_ERROE);
+            //获取路径
+            String filePath = location;
+            logger.info("图片保存路径={}", filePath);
+            String file_name = null;
+            try {
+                file_name = ImageUtil.saveImg(multipartFile, filePath);
+            } catch (IOException e) {
+                throw new BusinessException(ResultEnum.SAVE_IMG_ERROE);
+            }
         }
+        return JsonResponse.succ("上传成功");
     }
 
 
