@@ -5,6 +5,9 @@ import com.cc.homeserver.handle.BusinessException.ResultEnum;
 import com.cc.homeserver.utils.ImageUtil;
 import com.cc.homeserver.utils.JsonResponse;
 import com.cc.homeserver.utils.StringUtils;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping(value = "/images")
@@ -39,8 +44,12 @@ public class ImagesController {
         return map;
     }
 
-    @PutMapping("/article/img/upload")
-    public JsonResponse uploadImg(@RequestParam("editormd-image-file") MultipartFile[] multipartFiles)  throws Exception{
+    @ApiOperation(value = "文件素材上传接口")
+    @ApiImplicitParams({@ApiImplicitParam(name = "file", value = "文件流对象,接收数组格式", required = true,dataType = "MultipartFile"),
+            @ApiImplicitParam(name = "title", value = "title", required = true)}
+    )
+    @RequestMapping(value="/upload",method = POST)
+    public JsonResponse uploadImg(@RequestParam("editormd-image-file") MultipartFile[] multipartFiles, String title)  throws Exception{
         for(MultipartFile multipartFile : multipartFiles) {
             if (multipartFile.isEmpty() || StringUtils.isBlank(multipartFile.getOriginalFilename())) {
                 throw new BusinessException(ResultEnum.IMG_NOT_EMPTY);
