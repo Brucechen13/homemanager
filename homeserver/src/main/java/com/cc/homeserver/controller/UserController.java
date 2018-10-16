@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/islogin", method = GET, produces = "application/json")
-    public JsonResponse isLogin(String userName, String nickName, String password) {
+    public JsonResponse isLogin() {
         return WebResponse.getSuccessResponse("已经登录");
     }
 

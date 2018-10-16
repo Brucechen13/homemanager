@@ -11,4 +11,15 @@ public class EnumTypeUtils {
             this.name = name;
         }
     }
+
+    public enum ImageStateType{
+        PUBLIC("公开"),
+        PRIVATEALL("组间私有"),
+        PRIVATEGROUP("组内私有"),;
+        private String name;
+
+        ImageStateType(String name){
+            this.name = name;
+        }
+    }
 }

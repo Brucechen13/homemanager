@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
     public JsonResponse handleException(Exception e) {
         logger.error(e.getMessage(), e);
         return new JsonResponse("401", false, Codes.SERVER_ERR,
-                "服务器出现错误", null);
+                "服务器出现错误"+e.getLocalizedMessage(), null);
     }
 
     //不满足@RequiresGuest注解时抛出的异常信息

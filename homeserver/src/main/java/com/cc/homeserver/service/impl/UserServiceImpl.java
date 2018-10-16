@@ -120,7 +120,6 @@ public class UserServiceImpl implements IUserService
             if(userFamily.getFamilyName().equals(familyName)){
                 UserFamily family = familyJpaRepository.findById(userFamily.getId());
 
-
                 Set<OutUserInfo> data = new HashSet<>();
                 for (UserInfo info:
                         family.getUserInfos()) {

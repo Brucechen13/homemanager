@@ -36,4 +36,10 @@ public class UserFamily implements Serializable {
     @ManyToMany
     @JoinTable(name = "tmp_user_family", joinColumns = { @JoinColumn(name = "familyId") }, inverseJoinColumns ={@JoinColumn(name = "uid") })
     private Set<UserInfo> userInfos;// 家庭组所有成员
+
+    @OneToMany
+    @JoinColumn(name="image_id")
+    private Set<FamilyImage> images;
+
+
 }
