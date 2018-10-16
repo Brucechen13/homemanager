@@ -113,6 +113,8 @@ public class UserServiceImpl implements IUserService
         }
     }
 
+
+
     @Override
     public Set<OutUserInfo> getFamilyUsers(UserInfo userInfo, String familyName) {
         for (UserFamily userFamily:
@@ -160,5 +162,17 @@ public class UserServiceImpl implements IUserService
             }
         }
         return familyNames;
+    }
+
+    @Override
+    public UserFamily getUserFamily(UserInfo userInfo, String familyName) {
+        for (UserFamily family:
+                userInfo.getFamilyList()) {
+            if(family.getCreateUser().getLoginName().equals(userInfo.getLoginName())) {
+                family = familyJpaRepository.findById(family.getId());
+                return family;
+            }
+        }
+        return null;
     }
 }

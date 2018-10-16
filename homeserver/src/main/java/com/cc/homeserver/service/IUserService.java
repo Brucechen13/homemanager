@@ -29,4 +29,6 @@ public interface IUserService {
     public Set<OutFamilyInfo> getAllFamilys(UserInfo userInfo);
     public Set<OutFamilyInfo> getAllCreateFamilys(UserInfo userInfo);
 
+    public UserFamily getUserFamily(UserInfo userInfo, String familyName);
+
 }

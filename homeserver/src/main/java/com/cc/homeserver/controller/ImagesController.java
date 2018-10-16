@@ -1,15 +1,22 @@
 package com.cc.homeserver.controller;
 
+import com.cc.homeserver.entity.EnumTypeUtils;
+import com.cc.homeserver.entity.UserInfo;
 import com.cc.homeserver.handle.BusinessException;
 import com.cc.homeserver.handle.BusinessException.ResultEnum;
+import com.cc.homeserver.service.IImageService;
+import com.cc.homeserver.service.IUserService;
 import com.cc.homeserver.utils.ImageUtil;
 import com.cc.homeserver.utils.JsonResponse;
 import com.cc.homeserver.utils.StringUtils;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +33,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = "/images")
 public class ImagesController {
     private static final transient Logger logger = LoggerFactory.getLogger(ImagesController.class);
+
+    @Autowired
+    private IUserService userService;
+
+    @Autowired
+    private IImageService imageService;
 
     @Value("${img.location}")
     private String location;
@@ -49,7 +62,7 @@ public class ImagesController {
             @ApiImplicitParam(name = "title", value = "title", required = true)}
     )
     @RequestMapping(value="/upload",method = POST)
-    public JsonResponse uploadImg(@RequestParam(value="file") MultipartFile[] multipartFiles, String title)  throws Exception{
+    public JsonResponse uploadImg(@RequestParam(value="file") MultipartFile[] multipartFiles, String typeStr, String groupName)  throws Exception{
         for(MultipartFile multipartFile : multipartFiles) {
             if (multipartFile.isEmpty() || StringUtils.isBlank(multipartFile.getOriginalFilename())) {
                 throw new BusinessException(ResultEnum.IMG_NOT_EMPTY);
@@ -67,6 +80,12 @@ public class ImagesController {
             String file_name = null;
             try {
                 file_name = ImageUtil.saveImg(multipartFile, filePath);
+
+                Subject subject = SecurityUtils.getSubject();
+                // 取身份信息
+                UserInfo adminUser = (UserInfo) subject.getPrincipal();
+                EnumTypeUtils.ImageStateType type = EnumTypeUtils.ImageStateType.valueOf(typeStr);
+                imageService.addFamilyImage(adminUser, file_name, type, userService.getUserFamily(adminUser, groupName));
             } catch (IOException e) {
                 throw new BusinessException(ResultEnum.SAVE_IMG_ERROE);
             }
