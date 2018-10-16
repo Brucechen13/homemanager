@@ -8,10 +8,14 @@ import com.cc.homeserver.repository.FamilyImageJpaRepository;
 import com.cc.homeserver.repository.UserJpaRepository;
 import com.cc.homeserver.service.IImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
+@Transactional
 public class ImageServiceImpl implements IImageService {
 
     @Autowired
