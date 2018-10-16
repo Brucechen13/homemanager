@@ -10,8 +10,9 @@ import java.util.List;
 
 public interface FamilyImageJpaRepository extends JpaRepository<FamilyImage, Long> {
 
-    @Query(value = "SELECT a.bookpkid,a.bookcode,a.bookname,b.authorname FROM BookInfo a " +
-            "LEFT JOIN AuthorInfo b ON a.authorid=b.authorid " +
-            "WHERE a.bookpkid=:uid", nativeQuery = true)
-    List<Object[]> selectByUid(@Param("pkid") BigDecimal uid);
+    @Query(value = "SELECT picUrl FROM family_image fi\n" +
+            "JOIN tmp_user_family tuf ON fi.family_id = tuf.familyId WHERE tuf.uid==:uid " +
+            "UNION " +
+            "SELECT picUrl FROM family_image fi wheWHEREe fi.type = 'PUBLIC';", nativeQuery = true)
+    List<Object[]> selectByUid(@Param("uid") BigDecimal uid);
 }

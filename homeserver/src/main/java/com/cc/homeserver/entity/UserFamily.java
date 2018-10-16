@@ -38,8 +38,7 @@ public class UserFamily implements Serializable {
     private Set<UserInfo> userInfos;// 家庭组所有成员
 
     @OneToMany
-    @JoinColumn(name="image_id")
+    @JoinColumn(name="family_id")
     private Set<FamilyImage> images;
-
 
 }

@@ -50,6 +50,8 @@ public class UserInfo implements Serializable {
     private Timestamp gmtModified;
 
 
+    //todo 修改表的键名
+
     @ManyToMany(fetch= FetchType.EAGER)//立即从数据库中进行加载数据;
     @JoinTable(name = "sys_user_role", joinColumns = { @JoinColumn(name = "uid") }, inverseJoinColumns ={@JoinColumn(name = "roleId") })
     private Set<SysRole> roleList;// 一个用户具有多个角色
